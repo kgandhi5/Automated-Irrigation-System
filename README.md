@@ -11,7 +11,12 @@ green status LED and a power switch. The code checks how wet each pot is, waters
 are too dry, and stops safely if something breaks: a sensor comes unplugged, a pump fails, or the
 water tank runs empty.
 
-<!-- Photos and demo video go here. Tip: drag an .mp4 into any GitHub comment box to get a link you can paste in. -->
+<p align="center">
+  <img src="docs/images/Front.jpg" alt="Front view: the two irrigation boxes with their LCD screens on top of a plant shelf, labelled plants on the shelves and water buckets on the bottom" width="45%">
+  <img src="docs/images/Side.jpg" alt="Side view of the shelf showing the sensor and pump wiring running along the frame" width="45%">
+</p>
+
+<!-- Demo video goes here. Tip: drag an .mp4 into any GitHub comment box to get a link you can paste in. -->
 
 ## What it does
 
