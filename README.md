@@ -16,8 +16,6 @@ water tank runs empty.
   <img src="docs/images/Side.jpg" alt="Side view of the shelf showing the sensor and pump wiring running along the frame" width="45%">
 </p>
 
-<!-- Demo video goes here. Tip: drag an .mp4 into any GitHub comment box to get a link you can paste in. -->
-
 ## What it does
 
 1. **Reads all four soil moisture sensors once a second.** Each reading is really 7 quick
