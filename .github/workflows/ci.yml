@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  firmware:
+    name: Build firmware + unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: pio-${{ hashFiles('platformio.ini') }}
+      - name: Install PlatformIO
+        run: pip install platformio
+      - name: Build for Arduino Uno (parallel LCD and I2C LCD)
+        shell: bash  # explicit shell enables pipefail, so tee can't mask a failed build
+        run: pio run -e uno -e uno_i2c_lcd | tee pio-build.log
+      - name: Report flash / RAM usage
+        run: |
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          grep -E "Processing|RAM:|Flash:" pio-build.log >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - name: Host unit tests
+        run: pio test -e native
+
+  simulation:
+    name: Closed-loop simulation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build simulator (warnings are errors)
+        run: |
+          mkdir -p build
+          g++ -std=c++11 -O2 -Wall -Wextra -Werror -Ilib/irrigation_core/src \
+            sim/plant_sim.cpp lib/irrigation_core/src/irrigation/*.cpp -o build/plant_sim
+      - name: Run 48 h scenario with injected faults
+        shell: bash
+        run: ./build/plant_sim --hours 48 --csv build/sim.csv --events build/events.csv | tee build/summary.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: simulation-output
+          path: build/
